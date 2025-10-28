@@ -1,0 +1,46 @@
+name: Scheduled Event Scrape
+
+# This workflow can be used to run the scraper on GitHub Actions
+# Note: This is optional. The main deployment method is via server/Docker.
+
+on:
+  schedule:
+    # Run every day at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+      env:
+        PUPPETEER_SKIP_DOWNLOAD: false
+    
+    - name: Run scraper
+      run: npm run scrape
+      env:
+        HUSKYLINK_URL: ${{ secrets.HUSKYLINK_URL }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_KV_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}
+        STRAPI_URL: ${{ secrets.STRAPI_URL }}
+        STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
+    
+    - name: Upload event data as artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: event-data
+        path: output/
+        retention-days: 7
