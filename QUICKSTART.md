@@ -12,7 +12,7 @@ This guide will help you get the event scraper up and running quickly.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YudoongY/event-scraper.git
+   git clone https://github.com/USERNAME/event-scraper.git
    cd event-scraper
    ```
 
