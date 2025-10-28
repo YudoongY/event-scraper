@@ -1,0 +1,25 @@
+[Unit]
+Description=Event Scraper Service for HuskyLink Events
+After=network.target
+
+[Service]
+Type=simple
+User=node
+Group=node
+WorkingDirectory=/opt/event-scraper
+ExecStart=/usr/bin/node src/index.js --schedule
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/event-scraper/output.log
+StandardError=append:/var/log/event-scraper/error.log
+EnvironmentFile=/opt/event-scraper/.env
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/event-scraper/output
+
+[Install]
+WantedBy=multi-user.target

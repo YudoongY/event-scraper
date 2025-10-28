@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 yarn.lock
 
 # Environment variables
@@ -17,7 +16,7 @@ yarn-error.log*
 
 # Output
 output/
-*.json
+output/*.json
 
 # OS
 .DS_Store
