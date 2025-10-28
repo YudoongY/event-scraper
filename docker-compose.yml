@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  event-scraper:
+    build: .
+    container_name: event-scraper
+    restart: unless-stopped
+    environment:
+      # HuskyLink URL
+      - HUSKYLINK_URL=${HUSKYLINK_URL:-https://huskylink.washington.edu/events}
+      
+      # Cloudflare Configuration
+      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - CLOUDFLARE_KV_NAMESPACE_ID=${CLOUDFLARE_KV_NAMESPACE_ID}
+      
+      # Strapi Configuration
+      - STRAPI_URL=${STRAPI_URL:-http://strapi:1337}
+      - STRAPI_API_TOKEN=${STRAPI_API_TOKEN}
+      
+      # Output Configuration
+      - OUTPUT_DIR=/app/output
+      
+      # Cron Schedule
+      - CRON_SCHEDULE=${CRON_SCHEDULE:-0 6 * * *}
+    volumes:
+      - ./output:/app/output
+    networks:
+      - scraper-network
+
+  # Optional: Add Strapi if you want to run it locally
+  # strapi:
+  #   image: strapi/strapi:latest
+  #   container_name: strapi
+  #   restart: unless-stopped
+  #   environment:
+  #     - DATABASE_CLIENT=sqlite
+  #     - DATABASE_FILENAME=.tmp/data.db
+  #   ports:
+  #     - "1337:1337"
+  #   volumes:
+  #     - ./strapi-data:/srv/app
+  #   networks:
+  #     - scraper-network
+
+networks:
+  scraper-network:
+    driver: bridge
